@@ -22,7 +22,10 @@ export const validateSchemaWithSourceMap = (
   const listOfSchemas: string[] = Array.from(map.values());
   const fileNames: string[] = Array.from(map.keys());
   try {
-    const mergedSchema = makeExecutableSchema({ typeDefs: listOfSchemas });
+    const mergedSchema = makeExecutableSchema({
+      resolverValidationOptions: {requireResolversForResolveType: false},
+      typeDefs: listOfSchemas,
+    });
     return mergedSchema;
   } catch (allErrors) {
     const allErrorsMessages: string = allErrors.message;
@@ -31,7 +34,10 @@ export const validateSchemaWithSourceMap = (
     let listOfUnMappedErrors: string[] = allErrorsList.slice();
     for (let i = 0; i < listOfSchemas.length; i++) {
       try {
-        const fileSchema = makeExecutableSchema({ typeDefs: listOfSchemas[i] });
+        const fileSchema = makeExecutableSchema({
+      resolverValidationOptions: {requireResolversForResolveType: false},
+      typeDefs: listOfSchemas,
+    });
       } catch (error) {
         const errorsMessages: string = error.message;
         const errorsList = errorsMessages.split(errorsSeparator);
@@ -70,8 +76,9 @@ export const validateSchemaWithSourceMap = (
           schemaWithoutFilei.splice(index, 1);
         }
         const mergedSchemaWithoutFile = makeExecutableSchema({
-          typeDefs: schemaWithoutFilei,
-        });
+      resolverValidationOptions: {requireResolversForResolveType: false},
+      typeDefs: listOfSchemas,
+    });
         errorListClone.forEach((errorItem) => {
           listOfErrors.push(
             constructErrorMessage(++errorCounter, errorItem, fileNames[i]),
